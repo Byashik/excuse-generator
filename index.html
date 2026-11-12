@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор отмазок PRO</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
+
+        :root {
+            --bg-gradient: linear-gradient(135deg, #1e1e2f 0%, #2a2a40 100%);
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-muted: #a0a0b5;
+            --accent: #ff4757;
+            --accent-hover: #ff6b81;
+            --secondary: #2ed573;
+            --secondary-hover: #7bed9f;
+            --shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        /* Красивые светящиеся круги на фоне */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            opacity: 0.6;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+        .blob-1 { top: -10%; left: -10%; width: 400px; height: 400px; background: #ff4757; }
+        .blob-2 { bottom: -10%; right: -10%; width: 300px; height: 300px; background: #2ed573; animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 40%; width: 250px; height: 250px; background: #1e90ff; animation-duration: 15s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--card-border);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            position: relative;
+        }
+
+        .badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: white;
+            padding: 5px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.4);
+        }
+
+        h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #ffffff, #a0a0b5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+
+        select {
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--card-border);
+            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 16px;
+            cursor: pointer;
+            outline: none;
+            width: 100%;
+            transition: all 0.3s ease;
+            appearance: none; /* Убираем стандартную стрелку */
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px top 50%;
+            background-size: 12px auto;
+        }
+
+        select:focus {
+            border-color: var(--accent);
+        }
+
+        select option {
+            background: #2a2a40;
+            color: white;
+        }
+
+        .display-box {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px 20px;
+            border-radius: 16px;
+            min-height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            border: 1px solid var(--card-border);
+            transition: all 0.3s ease;
+            position: relative;
+            font-weight: 600;
+        }
+
+        .display-box.loading {
+            color: var(--text-muted);
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 10px;
+        }
+
+        button {
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        .btn-generate {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
+        }
+
+        .btn-generate:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 6px 20px rgba(255, 71, 87, 0.5);
+        }
+
+        .btn-copy {
+            background: var(--secondary);
+            color: #1e1e2f;
+            box-shadow: 0 4px 15px rgba(46, 213, 115, 0.3);
+        }
+
+        .btn-copy:hover {
+            background: var(--secondary-hover);
+            box-shadow: 0 6px 20px rgba(46, 213, 115, 0.5);
+        }
+
+        .stats {
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stats span {
+            font-weight: 800;
+            color: var(--text-main);
+            font-size: 16px;
+        }
+
+        /* Всплывающее уведомление */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--secondary);
+            color: #1e1e2f;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 800;
+            box-shadow: 0 10px 25px rgba(46, 213, 115, 0.4);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 500px) {
+            .buttons { grid-template-columns: 1fr; }
+            .container { padding: 30px 20px; }
+            h1 { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Светящиеся элементы фона -->
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="container">
+        <div class="badge">Hackathon Edition</div>
+        <h1>Генератор отмазок</h1>
+        <p class="subtitle">Твой личный ИИ-помощник для спасения репутации</p>
+        
+        <div class="controls">
+            <select id="category">
+                <option value="late">⏰ Опоздание</option>
+                <option value="homework">📚 Домашнее задание</option>
+                <option value="project">💻 Не сдал проект</option>
+                <option value="sleep">😴 Проспал</option>
+            </select>
+        </div>
+
+        <div class="display-box" id="displayBox">
+            Выбери категорию и нажми кнопку!
+        </div>
+
+        <div class="buttons">
+            <button class="btn-generate" id="generateBtn" onclick="generateExcuse()">
+                <span>🎲</span> Сгенерировать
+            </button>
+            <button class="btn-copy" onclick="copyExcuse()">
+                <span>📋</span> Копировать
+            </button>
+        </div>
+
+        <div class="stats">
+            Сгенерировано отмазок: <span id="counter">0</span>
+        </div>
+    </div>
+
+    <div class="toast" id="toast">Успешно скопировано! 🚀</div>
+
+    <script>
+        // База данных отмазок
+        const excuses = {
+            late: [
+                "Извините, я спасал котенка с дерева, и он оказался боссом местной мафии.",
+                "Я наступил на лего. Мне пришлось лежать на полу 20 минут, чтобы пережить боль.",
+                "Мой будильник был удален антивирусом как подозрительный файл.",
+                "Я ждал, пока интернет загрузит 1% и залип на 3 часа.",
+                "Ветер был слишком сильным, я шел против течения.",
+                "Автобус проехал мимо, потому что водитель не любит людей.",
+                "Я застрял в лифте с человеком, который рассказывал мне про свой стартап."
+            ],
+            homework: [
+                "Моя собака съела не только тетрадь, но и весь учебник, ручку и портфель.",
+                "Я сделал домашку, но она была настолько гениальной, что я испугался и удалил файл.",
+                "Кот лег на клавиатуру и случайно нажал Alt+F4, а потом еще и Shift+Delete.",
+                "Я оставил тетрадь на балконе, чтобы она проветрилась, и ее унесло ветром.",
+                "Инопланетяне похитили меня ровно в тот момент, когда я сел за уроки.",
+                "У меня был выбор: сделать домашку или спасти мир. Мир в безопасности.",
+                "В моей комнате произошел сбой в матрице, и домашнее задание просто не прогрузилось."
+            ],
+            project: [
+                "Проект был готов, но сервер GitHub упал именно в момент пуша.",
+                "Я переписывал код на более чистый, и случайно удалил всю папку без бэкапа.",
+                "Мой компьютер решил обновиться до Windows 12 прямо во время компиляции.",
+                "Код работает на моей машине. Проблема в вашем окружении.",
+                "Я нашел критический баг в библиотеке, которую мы используем, и отправил PR разработчикам. Ждем мержа."
+            ],
+            sleep: [
+                "Я вошел в фазу глубокого сна, и меня нельзя было будить по законам физики.",
+                "Мой смартфон решил, что режим полета — это отличная идея для всей квартиры.",
+                "Я путешествовал во времени во сне и перепутал часовые пояса.",
+                "Сосед сверху сверлил стену, и я уснул только под утро из-за стресса.",
+                "Я пытался проснуться, но одеяло было слишком тяжелым (оно весит 40 кг)."
+            ]
+        };
+
+        const displayBox = document.getElementById('displayBox');
+        const categorySelect = document.getElementById('category');
+        const toast = document.getElementById('toast');
+        const counterEl = document.getElementById('counter');
+        const generateBtn = document.getElementById('generateBtn');
+        
+        let currentExcuse = "";
+        let totalGenerated = 0;
+
+        // Функция генерации
+        function generateExcuse() {
+            const category = categorySelect.value;
+            const list = excuses[category];
+            
+            // Анимация загрузки (ИИ думает)
+            displayBox.classList.add('loading');
+            displayBox.innerHTML = "ИИ придумывает отмазку... ⏳";
+            generateBtn.disabled = true;
+            generateBtn.style.opacity = '0.7';
+
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * list.length);
+                currentExcuse = list[randomIndex];
+                
+                displayBox.classList.remove('loading');
+                displayBox.innerText = `«${currentExcuse}»`;
+                
+                // Обновляем счетчик
+                totalGenerated++;
+                counterEl.innerText = totalGenerated;
+                
+                generateBtn.disabled = false;
+                generateBtn.style.opacity = '1';
+            }, 600); // Задержка 0.6 секунды для эффекта
+        }
+
+        // Функция копирования
+        function copyExcuse() {
+            if (!currentExcuse) {
+                showToast("Сначала сгенерируйте отмазку!", true);
+                return;
+            }
+
+            navigator.clipboard.writeText(currentExcuse).then(() => {
+                showToast("Текст скопирован в буфер обмена! 📋");
+            }).catch(err => {
+                console.error('Ошибка копирования: ', err);
+                showToast("Не удалось скопировать 😢", true);
+            });
+        }
+
+        // Функция показа уведомления
+        function showToast(message, isError = false) {
+            toast.innerText = message;
+            toast.style.background = isError ? '#ff4757' : '#2ed573';
+            toast.style.color = isError ? '#ffffff' : '#1e1e2f';
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
